@@ -178,7 +178,7 @@ def green2d_trace(r, v, t, f0, t0, pad=16):
     numpy FFT convention):  P(w) = S(w) * (-i/4) H0^(2)(w r / v) / v^2.
 
     Normalisation follows from the 2D retarded Green's function
-    G = H(vt - r) / (2 pi v sqrt(v^2 t^2 - r^2)) (Lousto & Nakano 2009 for
+    G = H(vt - r) / (2 pi v sqrt(v^2 t^2 - r^2)) (Lousto & Nakano 2008 for
     v = 1, rescaled); test_green_freq_vs_time checks the two forms agree.
     The source is delayed by t0 and the record padded `pad`x to limit
     wrap-around of the 1/t tail. The discrete source term dt^2 s^n enters

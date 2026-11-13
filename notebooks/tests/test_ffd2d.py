@@ -100,3 +100,16 @@ def test_predicted_ffd_limit_matches_time_stepping():
         growth[C] = np.abs(p).max() / np.abs(p0).max()
     lo, hi = sorted(growth)
     assert growth[lo] < 10 and growth[hi] > 1e3
+
+
+def test_ffd_coeff_a_matches_paper_eq8_printed_form():
+    # Paper eq. 8 writes a = (v^2/v0^2)[1 + dt^2 (v0^2 - v^2) sum_n(1/dx_n^2) / 6]
+    # (3D form: sum_n 1/dx_n^2 = (dx1^2 dx2^2 + dx2^2 dx3^2 + dx3^2 dx1^2)/(dx1^2 dx2^2 dx3^2)).
+    # The code uses a = v^2/v0^2 - 2 sum_n b_n; both must agree (2D: n = x, z).
+    v = np.array([550.0, 1439.0, 4000.0])
+    v0, dt, dx, dz = 2000.0, 1e-3, 37.5, 12.5
+    a, bx, bz = f.ffd_coeffs(v, v0, dt, dx, dz)
+    a_paper = v ** 2 / v0 ** 2 * (1 + dt ** 2 * (v0 ** 2 - v ** 2) * (1 / dx ** 2 + 1 / dz ** 2) / 6)
+    assert np.allclose(a, a_paper, rtol=1e-13)
+    # a + 2 sum b_n = v^2/v0^2: the k -> 0 (zeroth-order) match of eq. 7
+    assert np.allclose(a + 2 * (bx + bz), v ** 2 / v0 ** 2)
